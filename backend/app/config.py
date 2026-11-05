@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     app_name: str = "CuidaRed API"
     database_url: str = "sqlite:///./cuidared.db"
     secret_key: str = "solo-para-desarrollo"
+    access_token_expire_minutes: int = 60
 
 
 settings = Settings()

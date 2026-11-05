@@ -19,13 +19,14 @@ docker compose up --build
 
 Instrucciones detalladas: [docs/01-instalacion-windows.md](docs/01-instalacion-windows.md).
 Alcance y reglas: [docs/00-alcance-mvp.md](docs/00-alcance-mvp.md).
+Modelo de datos y endpoints: [docs/02-modelo-de-datos.md](docs/02-modelo-de-datos.md).
 
 ## Estado
 
 | Paso | Contenido | Estado |
 |---|---|---|
 | 1 | Alcance y repositorio | Hecho |
-| 2 | Backend base: datos y autenticación | Pendiente |
+| 2 | Backend base: datos y autenticación | Hecho |
 | 3 | Backend de matching y deslizamiento | Pendiente |
 | 4 | Backend de seguimiento, horas y pago simulado | Pendiente |
 | 5 | App Flutter base | Pendiente |
