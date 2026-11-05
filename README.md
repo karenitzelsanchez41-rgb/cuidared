@@ -20,6 +20,7 @@ docker compose up --build
 Instrucciones detalladas: [docs/01-instalacion-windows.md](docs/01-instalacion-windows.md).
 Alcance y reglas: [docs/00-alcance-mvp.md](docs/00-alcance-mvp.md).
 Modelo de datos y endpoints: [docs/02-modelo-de-datos.md](docs/02-modelo-de-datos.md).
+Matching, precio y deslizamiento: [docs/03-matching.md](docs/03-matching.md).
 
 ## Estado
 
@@ -27,7 +28,7 @@ Modelo de datos y endpoints: [docs/02-modelo-de-datos.md](docs/02-modelo-de-dato
 |---|---|---|
 | 1 | Alcance y repositorio | Hecho |
 | 2 | Backend base: datos y autenticación | Hecho |
-| 3 | Backend de matching y deslizamiento | Pendiente |
+| 3 | Backend de matching y deslizamiento | Hecho |
 | 4 | Backend de seguimiento, horas y pago simulado | Pendiente |
 | 5 | App Flutter base | Pendiente |
 | 6 | App Flutter, flujos principales | Pendiente |

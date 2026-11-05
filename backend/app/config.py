@@ -10,6 +10,12 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./cuidared.db"
     secret_key: str = "solo-para-desarrollo"
     access_token_expire_minutes: int = 60
+    # Claves AGEB prioritarias (del Observatorio), separadas por comas.
+    agebs_prioritarias: str = ""
+
+    @property
+    def agebs_prioritarias_lista(self) -> set[str]:
+        return {x.strip() for x in self.agebs_prioritarias.split(",") if x.strip()}
 
 
 settings = Settings()

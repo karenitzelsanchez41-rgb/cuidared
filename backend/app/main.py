@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from app import models  # noqa: F401  (registra las tablas en Base)
 from app.config import settings
 from app.database import Base, engine
-from app.routers import auth
+from app.routers import auth, servicios, solicitudes, vinculaciones
 
 
 @asynccontextmanager
@@ -16,12 +16,15 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(
     title=settings.app_name,
-    version="0.2.0",
+    version="0.3.0",
     description="API de la plataforma de vinculación de cuidados (prototipo académico).",
     lifespan=lifespan,
 )
 
 app.include_router(auth.router)
+app.include_router(servicios.router)
+app.include_router(solicitudes.router)
+app.include_router(vinculaciones.router)
 
 
 @app.get("/health", tags=["sistema"])

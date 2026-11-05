@@ -1,7 +1,7 @@
 import enum
 from datetime import datetime, timezone
 
-from sqlalchemy import CheckConstraint, DateTime, Enum, ForeignKey, Integer, String
+from sqlalchemy import CheckConstraint, DateTime, Enum, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -29,6 +29,17 @@ class EstadoSolicitud(str, enum.Enum):
     abierta = "abierta"
     cerrada = "cerrada"
     cancelada = "cancelada"
+
+
+class TipoDecision(str, enum.Enum):
+    me_interesa = "me_interesa"
+    pasar = "pasar"
+
+
+class EstadoVinculacion(str, enum.Enum):
+    pendiente = "pendiente"
+    aceptada = "aceptada"
+    rechazada = "rechazada"
 
 
 class Usuario(Base):
@@ -94,3 +105,33 @@ class Solicitud(Base):
     creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_ahora)
 
     solicitante: Mapped["Usuario"] = relationship(back_populates="solicitudes")
+
+
+class Decision(Base):
+    """Lo que quien contrata decidió al deslizar una tarjeta: "me interesa" o "pasar"."""
+
+    __tablename__ = "decisiones"
+    __table_args__ = (UniqueConstraint("solicitud_id", "servicio_id", name="uq_decision_solicitud_servicio"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    solicitud_id: Mapped[int] = mapped_column(ForeignKey("solicitudes.id"), index=True)
+    servicio_id: Mapped[int] = mapped_column(ForeignKey("servicios.id"), index=True)
+    decision: Mapped[TipoDecision] = mapped_column(Enum(TipoDecision))
+    creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_ahora)
+
+
+class Vinculacion(Base):
+    """Solicitud de contacto. Se abre el contacto solo cuando la persona cuidadora la acepta."""
+
+    __tablename__ = "vinculaciones"
+    __table_args__ = (UniqueConstraint("solicitud_id", "servicio_id", name="uq_vinculacion_solicitud_servicio"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    solicitud_id: Mapped[int] = mapped_column(ForeignKey("solicitudes.id"), index=True)
+    servicio_id: Mapped[int] = mapped_column(ForeignKey("servicios.id"), index=True)
+    estado: Mapped[EstadoVinculacion] = mapped_column(Enum(EstadoVinculacion), default=EstadoVinculacion.pendiente)
+    creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_ahora)
+    respondida_en: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    solicitud: Mapped["Solicitud"] = relationship()
+    servicio: Mapped["Servicio"] = relationship()

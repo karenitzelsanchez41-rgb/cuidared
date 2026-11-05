@@ -4,6 +4,10 @@
 erDiagram
     USUARIOS ||--o{ SERVICIOS : ofrece
     USUARIOS ||--o{ SOLICITUDES : publica
+    SOLICITUDES ||--o{ DECISIONES : recibe
+    SERVICIOS ||--o{ DECISIONES : recibe
+    SOLICITUDES ||--o{ VINCULACIONES : origina
+    SERVICIOS ||--o{ VINCULACIONES : origina
 
     USUARIOS {
         int id PK
@@ -34,9 +38,22 @@ erDiagram
         int presupuesto_max "MXN por hora"
         enum estado "abierta | cerrada | cancelada"
     }
+    DECISIONES {
+        int id PK
+        int solicitud_id FK
+        int servicio_id FK
+        enum decision "me_interesa | pasar"
+    }
+    VINCULACIONES {
+        int id PK
+        int solicitud_id FK
+        int servicio_id FK
+        enum estado "pendiente | aceptada | rechazada"
+        datetime respondida_en
+    }
 ```
 
-Las tablas de vinculaciones, horas, pagos simulados, evaluaciones e incidentes se agregan en los Pasos 3 y 4.
+Las tablas de horas, pagos simulados, evaluaciones e incidentes se agregan en el Paso 4. Los endpoints de servicios, solicitudes y vinculaciones están en `03-matching.md`.
 
 ## Decisiones de diseño y privacidad
 
