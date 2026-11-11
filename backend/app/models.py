@@ -1,7 +1,7 @@
 import enum
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
-from sqlalchemy import CheckConstraint, DateTime, Enum, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, Enum, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -135,3 +135,52 @@ class Vinculacion(Base):
 
     solicitud: Mapped["Solicitud"] = relationship()
     servicio: Mapped["Servicio"] = relationship()
+
+
+class TipoSeguimiento(str, enum.Enum):
+    todo_bien = "todo_bien"
+    problema = "problema"
+
+
+class HoraTrabajo(Base):
+    """Horas de cuidado que registra la persona cuidadora. Quien contrata las confirma y se simula el pago."""
+
+    __tablename__ = "horas_trabajo"
+    __table_args__ = (CheckConstraint("horas >= 1 AND horas <= 24", name="ck_horas_validas"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    vinculacion_id: Mapped[int] = mapped_column(ForeignKey("vinculaciones.id"), index=True)
+    fecha: Mapped[date] = mapped_column(Date)
+    horas: Mapped[int] = mapped_column(Integer)
+    confirmada_contratante: Mapped[bool] = mapped_column(Boolean, default=False)
+    creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_ahora)
+
+
+class Seguimiento(Base):
+    """Check-in de seguimiento: "todo va bien" o "reportar un problema"."""
+
+    __tablename__ = "seguimientos"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    vinculacion_id: Mapped[int] = mapped_column(ForeignKey("vinculaciones.id"), index=True)
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"), index=True)
+    tipo: Mapped[TipoSeguimiento] = mapped_column(Enum(TipoSeguimiento))
+    nota: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_ahora)
+
+
+class Evaluacion(Base):
+    """Valoración mutua al terminar. Una por persona y vinculación."""
+
+    __tablename__ = "evaluaciones"
+    __table_args__ = (
+        UniqueConstraint("vinculacion_id", "usuario_id", name="uq_evaluacion_vinculacion_usuario"),
+        CheckConstraint("puntuacion >= 1 AND puntuacion <= 5", name="ck_puntuacion_valida"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    vinculacion_id: Mapped[int] = mapped_column(ForeignKey("vinculaciones.id"), index=True)
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"), index=True)
+    puntuacion: Mapped[int] = mapped_column(Integer)
+    comentario: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    creado_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_ahora)

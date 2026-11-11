@@ -12,6 +12,12 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
     # Claves AGEB prioritarias (del Observatorio), separadas por comas.
     agebs_prioritarias: str = ""
+    # Orígenes web permitidos (CORS), separados por comas. "*" = cualquiera (solo prototipo).
+    cors_origins: str = "*"
+
+    @property
+    def cors_origins_lista(self) -> list[str]:
+        return [x.strip() for x in self.cors_origins.split(",") if x.strip()]
 
     @property
     def agebs_prioritarias_lista(self) -> set[str]:

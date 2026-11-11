@@ -29,9 +29,9 @@ Matching, precio y deslizamiento: [docs/03-matching.md](docs/03-matching.md).
 | 1 | Alcance y repositorio | Hecho |
 | 2 | Backend base: datos y autenticación | Hecho |
 | 3 | Backend de matching y deslizamiento | Hecho |
-| 4 | Backend de seguimiento, horas y pago simulado | Pendiente |
-| 5 | App Flutter base | Pendiente |
-| 6 | App Flutter, flujos principales | Pendiente |
+| 4 | Backend de seguimiento, horas y pago simulado | En pruebas |
+| 5 | App Flutter base | En pruebas |
+| 6 | App Flutter, flujos principales | En pruebas |
 | 7 | Pruebas y privacidad | Pendiente |
 | 8 | Documentación final | Pendiente |
 

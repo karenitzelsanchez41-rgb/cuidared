@@ -92,7 +92,7 @@ def test_coincidencias_filtran_y_ordenan(client, escenario):
     assert [t["servicio_id"] for t in tarjetas] == [escenario["ids"]["ana"], escenario["ids"]["beto"]]
     assert [t["puntaje"] for t in tarjetas] == [100, 85]
     assert "email" not in tarjetas[0]
-    assert {c["nombre"] for c in tarjetas[0]["criterios"]} == {"Tipo de cuidado", "Zona", "Precio"}
+    assert {c["nombre"] for c in tarjetas[0]["criterios"]} == {"Tipo de cuidado", "Horario", "Zona", "Precio"}
 
 
 def test_zona_prioritaria_se_marca_en_las_tarjetas(client, escenario, monkeypatch):

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, selectinload
 from app.config import settings
 from app.database import get_db
 from app.deps import requiere_perfil
-from app.matching import calcular_compatibilidad
+from app.matching import calcular_compatibilidad, evaluar_horario
 from app.models import Decision, Perfil, Servicio, Solicitud, TipoDecision, Usuario, Vinculacion
 from app.schemas import (
     Coincidencia,
@@ -80,6 +80,10 @@ def coincidencias(
         )
         if resultado is None:
             continue
+        criterios = [CriterioPublico(nombre=c.nombre, estado=c.estado) for c in resultado.criterios]
+        horario = evaluar_horario(solicitud.horario, servicio.disponibilidad)
+        if horario is not None:  # informativo: no cambia el puntaje
+            criterios.insert(1, CriterioPublico(nombre=horario.nombre, estado=horario.estado))
         tarjetas.append(
             Coincidencia(
                 servicio_id=servicio.id,
@@ -90,7 +94,7 @@ def coincidencias(
                 disponibilidad=servicio.disponibilidad,
                 puntaje=resultado.puntaje,
                 zona_prioritaria=prioritaria,
-                criterios=[CriterioPublico(nombre=c.nombre, estado=c.estado) for c in resultado.criterios],
+                criterios=criterios,
             )
         )
     tarjetas.sort(key=lambda t: (-t.puntaje, t.tarifa_min, t.servicio_id))

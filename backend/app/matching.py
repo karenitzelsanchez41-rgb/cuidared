@@ -4,6 +4,7 @@ Este módulo no depende de la base de datos, así que se puede probar y ajustar 
 La compatibilidad va de 0 a 100 y cada criterio explica cuántos puntos aportó.
 """
 
+import re
 from dataclasses import dataclass
 
 PUNTOS_TIPO = 20
@@ -52,6 +53,26 @@ def evaluar_precio(presupuesto_min: int, presupuesto_max: int, tarifa_min: int, 
     if tarifa_max <= presupuesto_max:
         return Criterio("Precio", "coincide", PUNTOS_PRECIO_DENTRO)
     return Criterio("Precio", "parcial", PUNTOS_PRECIO_PARCIAL)
+
+
+def normalizar_franjas(texto: str | None) -> set[str]:
+    """Convierte "Mañanas, tardes" en {"mañana", "tarde"} para poder comparar horarios."""
+    franjas = set()
+    for parte in re.split(r"[,;/]|\sy\s", (texto or "").lower()):
+        franja = parte.strip()
+        if franja.endswith("s") and not franja.startswith("fines"):
+            franja = franja[:-1]
+        if franja:
+            franjas.add(franja)
+    return franjas
+
+
+def evaluar_horario(horario_solicitud: str | None, disponibilidad: str | None) -> Criterio | None:
+    """Criterio informativo (0 puntos): None si falta alguno de los dos datos."""
+    pedidas, ofrecidas = normalizar_franjas(horario_solicitud), normalizar_franjas(disponibilidad)
+    if not pedidas or not ofrecidas:
+        return None
+    return Criterio("Horario", "coincide" if pedidas & ofrecidas else "no_coincide", 0)
 
 
 def calcular_compatibilidad(

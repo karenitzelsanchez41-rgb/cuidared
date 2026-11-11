@@ -129,3 +129,58 @@ class VinculacionPublica(BaseModel):
 
 class RespuestaVinculacion(BaseModel):
     aceptar: bool
+
+
+# ---------- Seguimiento, horas y pago simulado (Paso 4) ----------
+from datetime import date  # noqa: E402
+
+from app.models import TipoSeguimiento  # noqa: E402
+
+
+class PasoSeguimiento(BaseModel):
+    clave: str
+    titulo: str
+    detalle: str
+    estado: str  # "hecho", "actual" o "pendiente"
+
+
+class SeguimientoRespuesta(BaseModel):
+    otra_persona: str
+    estado_vinculacion: EstadoVinculacion
+    pasos: list[PasoSeguimiento]
+    aviso_seguridad: str
+
+
+class CheckinCrear(BaseModel):
+    todo_bien: bool
+    nota: str | None = Field(default=None, max_length=500)
+
+
+class CheckinRespuesta(BaseModel):
+    tipo: TipoSeguimiento
+
+
+class EvaluacionCrear(BaseModel):
+    puntuacion: int = Field(ge=1, le=5)
+    comentario: str | None = Field(default=None, max_length=500)
+
+
+class HoraCrear(BaseModel):
+    fecha: date
+    horas: int = Field(ge=1, le=24)
+
+
+class HoraPublica(BaseModel):
+    id: int
+    fecha: date
+    horas: int
+    confirmada: bool
+
+
+class HorasRespuesta(BaseModel):
+    registros: list[HoraPublica]
+    total_horas: int
+    tarifa_acordada: int
+    total_a_pagar: int
+    quien_paga: str
+    estado_pago: str  # "sin_horas", "por_confirmar" o "pagado_simulado"
